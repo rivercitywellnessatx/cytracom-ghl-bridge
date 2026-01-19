@@ -70,7 +70,12 @@ function cleanPhone(phone) {
   return cleaned.length >= 10 ? cleaned : null;
 }
 
-// Keep the process running
+// Keep the process running - log every 5 minutes
+setInterval(() => {
+  console.log('⏰ Still running and listening...');
+}, 5 * 60 * 1000);
+
+// Handle graceful shutdown
 process.on('SIGTERM', () => {
   console.log('Shutting down gracefully...');
   eventSource.close();

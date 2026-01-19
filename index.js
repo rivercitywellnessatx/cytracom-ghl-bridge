@@ -17,6 +17,15 @@ eventSource.addEventListener('chan.hangup', async (e) => {
   try {
     const data = JSON.parse(e.data);
     
+    // Log ALL hangup events to debug
+    console.log('📞 Hangup event received:', {
+      direction: data.direction,
+      dial_status: data.channel?.dial_status,
+      caller_number: data.caller?.number,
+      channel_number: data.channel?.number,
+      connected_number: data.channel?.connected_number
+    });
+    
     if (data.direction === 'inbound' && data.channel?.dial_status === 'no answer') {
       const callerNumber = extractPhone(data);
       

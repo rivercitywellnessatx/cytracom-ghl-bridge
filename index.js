@@ -17,11 +17,9 @@ eventSource.addEventListener('chan.hangup', async (e) => {
   try {
     const data = JSON.parse(e.data);
     
-    // Log the FULL event to see all fields
-    console.log('📞 Full hangup event:', JSON.stringify(data, null, 2));
-    
     if (data.direction === 'inbound' && data.channel?.dial_status === 'no answer') {
-      const callerNumber = extractPhone(data);
+      // The caller's number is in channel.number
+      const callerNumber = cleanPhone(data.channel.number);
       
       if (callerNumber) {
         console.log(`📞 Missed call from ${callerNumber}`);
@@ -55,20 +53,6 @@ eventSource.onopen = () => {
 eventSource.onerror = (err) => {
   console.error('❌ SSE error:', err);
 };
-
-function extractPhone(data) {
-  if (data.channel?.connected_number) {
-    return cleanPhone(data.channel.connected_number);
-  }
-  if (data.caller?.number) {
-    return cleanPhone(data.caller.number);
-  }
-  if (data.original_caller_id) {
-    const match = data.original_caller_id.match(/\d{10,}/);
-    return match ? match[0] : null;
-  }
-  return null;
-}
 
 function cleanPhone(phone) {
   const cleaned = phone.replace(/\D/g, '');

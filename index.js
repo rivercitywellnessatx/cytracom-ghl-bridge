@@ -44,27 +44,7 @@ eventSource.addEventListener('chan.hangup', async (e) => {
 
 eventSource.onopen = () => {
   console.log('✅ Connected to Cytracom SSE');
-  
-  // Send a test webhook to GoHighLevel on startup
-  setTimeout(async () => {
-    console.log('🧪 Sending test webhook to GoHighLevel...');
-    try {
-      await fetch(GHL_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: '5551234567',
-          event: 'missed_call',
-          timestamp: Date.now(),
-          linked_id: 'test-call-id',
-          test: true
-        })
-      });
-      console.log('✅ Test webhook sent!');
-    } catch (err) {
-      console.error('❌ Test webhook failed:', err);
-    }
-  }, 2000);
+  console.log('🎧 Listening for missed calls...');
 };
 
 eventSource.onerror = (err) => {
@@ -89,3 +69,10 @@ function cleanPhone(phone) {
   const cleaned = phone.replace(/\D/g, '');
   return cleaned.length >= 10 ? cleaned : null;
 }
+
+// Keep the process running
+process.on('SIGTERM', () => {
+  console.log('Shutting down gracefully...');
+  eventSource.close();
+  process.exit(0);
+});

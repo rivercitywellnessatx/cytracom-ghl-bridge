@@ -52,7 +52,7 @@ eventSource.addEventListener('chan.hangup', async (e) => {
         clearTimeout(pendingCalls.get(data.linked_id));
       }
       
-      // Wait 3 seconds after last "no answer" before sending
+      // Wait 20 seconds after last "no answer" before sending
       const timer = setTimeout(async () => {
         processedCalls.add(data.linked_id);
         pendingCalls.delete(data.linked_id);
@@ -86,10 +86,10 @@ eventSource.addEventListener('chan.hangup', async (e) => {
         setTimeout(() => {
           processedCalls.delete(data.linked_id);
         }, 5 * 60 * 1000);
-      }, 3000);
+      }, 20000); // 20 second delay
       
       pendingCalls.set(data.linked_id, timer);
-      console.log(`⏱️ Detected missed call from ${callerNumber}, waiting for call to finish...`);
+      console.log(`⏱️ Detected missed call from ${callerNumber}, waiting 20s for call to finish...`);
     }
   } catch (err) {
     console.error('❌ Error processing hangup event:', err.message);
